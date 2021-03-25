@@ -7,27 +7,37 @@ class AddBook extends Component{
 
 state = {
     query:'',
-    books:[]
+    books:[],
+    error:''
 }
 
+shelfUpdate(book,shelf){
+    BooksAPI.update(book,shelf)
+    .then(() => {
+      window.location.replace('/')
+    })
+    
+
+}
 
 
   updateQuery = (query) => {
     this.setState(() => ({
-        query: query.trim()
-    }))
-   
-    BooksAPI.search(this.state.query)
-    .then((books) => {
-        if(books){
-        console.log(books)
-        if (this.state.query==='') this.setState(() => ({books: []}));
-        else this.setState(() => ({books: books}));
-        }
-        else this.setState(() => ({books: []}));
+        query: query
+    }),() => {
+        BooksAPI.search(this.state.query)
+        .then((books) => {
             
-        
+            console.log(books)
+            if (this.state.query==='') this.setState(() => ({books: []}));
+            else this.setState(() => ({books: books}));
+            
+                
+            
+        })
     })
+   
+
 
 }
 
@@ -37,10 +47,20 @@ state = {
     render(){
 
 
+const {savedBooks} = this.props
+ if (typeof (this.state.books.error) === 'undefined'){
+this.state.books.forEach(book => {
+    savedBooks.forEach(sBook => {
 
+if(sBook.id === book.id) {
+    console.log("done");
+    book.shelf = sBook.shelf;
+}
+        
+    })
+})
 
-
-
+} 
         return(
             <div>
 
@@ -63,6 +83,7 @@ state = {
 
 
 {
+    (typeof (this.state.books.error) === 'undefined') ? (
     this.state.books.map((book) => (
         <li key={book.id} className=''>
             <div className="book">
@@ -71,8 +92,8 @@ state = {
                     <div className="book-cover" style={{ width: 128, height: 193, backgroundImage:
                        (book.imageLinks) ? `url(${(book.imageLinks.thumbnail)})` : "" }}></div>
                     <div className="book-shelf-changer">
-                    <select   value='move'
-                                onChange={(event) => BooksAPI.update(book,event.target.value)}>
+                    <select   value={(book.shelf) ? book.shelf : "none"}
+                                onChange={(event) => this.shelfUpdate(book,event.target.value)}>
                             <option value="move" disabled>Move to...</option>
                             <option value="currentlyReading" >Currently Reading</option>
                             <option value="wantToRead" >Want to Read</option>
@@ -82,10 +103,11 @@ state = {
                     </div>
                 </div>
                 <div className="book-title">{book.title}</div>
-                <div className="book-authors">{book.authors}</div>           
+                <div className="book-authors">{book.authors && book.authors.join(', ')}</div>           
                  </div>
         </li>
     ))
+     ) : alert("NOT FOUND")
 }
 
 

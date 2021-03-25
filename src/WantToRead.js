@@ -4,7 +4,14 @@ import * as BooksAPI from './BooksAPI'
 
 class WantToRead extends Component{
 
-
+    shelfUpdate(book,shelf){
+        BooksAPI.update(book,shelf)
+        .then(() => {
+          window.location.reload()
+        })
+        
+    
+    }
 
     render(){
         const {books  } = this.props
@@ -25,8 +32,8 @@ class WantToRead extends Component{
                         <div className="book-cover" style={{ width: 128, height: 193, backgroundImage:
                              `url(${book.imageLinks.thumbnail})` }}></div>
                         <div className="book-shelf-changer">
-                        <select   value='move'
-                                onChange={(event) => BooksAPI.update(book,event.target.value)}>
+                        <select   value={book.shelf}
+                                onChange={(event) => this.shelfUpdate(book,event.target.value)}>
                             <option value="move" disabled>Move to...</option>
                             <option value="currentlyReading" >Currently Reading</option>
                             <option value="wantToRead" >Want to Read</option>
@@ -36,7 +43,7 @@ class WantToRead extends Component{
                         </div>
                     </div>
                     <div className="book-title">{book.title}</div>
-                    <div className="book-authors">{book.authors}</div>           
+                    <div className="book-authors">{book.authors && book.authors.join(', ')}</div>           
                </div>
             </li>
         ))

@@ -67,7 +67,7 @@ componentDidMount(){
 
           <Route path='/search' render={({ history }) => (
           <AddBook 
-          books = {this.state.readBooks.concat(this.state.wantToReadBooks,this.state.currentlyReadingBooks)}
+          savedBooks = {this.state.readBooks.concat(this.state.wantToReadBooks,this.state.currentlyReadingBooks)}
           />
         )} />
       </div>

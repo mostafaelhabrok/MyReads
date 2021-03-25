@@ -3,6 +3,14 @@ import { Link } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 
 class CurrentlyReading extends Component{
+    shelfUpdate(book,shelf){
+        BooksAPI.update(book,shelf)
+        .then(() => {
+          window.location.reload()
+        })
+        
+    
+    }
 render(){
     const {books  } = this.props
     return(
@@ -22,8 +30,8 @@ render(){
                     <div className="book-cover" style={{ width: 128, height: 193, backgroundImage:
                          `url(${book.imageLinks.thumbnail})` }}></div>
                     <div className="book-shelf-changer">
-                    <select   value='move'
-                                onChange={(event) => BooksAPI.update(book,event.target.value)}>
+                    <select   value={book.shelf}
+                                onChange={(event) => this.shelfUpdate(book,event.target.value)}>
                             <option value="move" disabled>Move to...</option>
                             <option value="currentlyReading" >Currently Reading</option>
                             <option value="wantToRead" >Want to Read</option>
@@ -33,7 +41,7 @@ render(){
                     </div>
                 </div>
                 <div className="book-title">{book.title}</div>
-                <div className="book-authors">{book.authors}</div>           
+                <div className="book-authors">{book.authors && book.authors.join(', ')}</div>           
 
             </div>
         </li>
